@@ -56,7 +56,7 @@ public class PdfUtil {
             document.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         return output.toByteArray();

@@ -96,7 +96,7 @@ public class CvBot extends TelegramLongPollingBot {
                     sendWord(msg, wordBytes, "CV_" + (data.name != null ? data.name.replaceAll(" ", "_") : "Unknown") + ".docx");
                     logger.info("Successfully generated CV for user {} (Name in CV: {}).", userIdentifier, cvUserName);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                     sendText(msg, "Sorry, an error occurred while generating your CV. Please try again.");
                 } finally {
                     userData.remove(userId);
@@ -111,7 +111,7 @@ public class CvBot extends TelegramLongPollingBot {
             try {
                 execute(sm);
             } catch (TelegramApiException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
 
@@ -122,7 +122,7 @@ public class CvBot extends TelegramLongPollingBot {
             try {
                 execute(doc);
             } catch (TelegramApiException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
 
@@ -134,7 +134,7 @@ public class CvBot extends TelegramLongPollingBot {
         try {
             execute(doc);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 

@@ -84,7 +84,7 @@ public class CvWebhookBot extends TelegramWebhookBot {
             try {
                 execute(replyMessage);
             } catch (TelegramApiException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
 
             try {
@@ -113,7 +113,7 @@ public class CvWebhookBot extends TelegramWebhookBot {
                 logger.info("Successfully generated CV for user {} (Name in CV: {}).", userIdentifier, cvUserName);
                 System.out.println("Successfully generated CV for user"+ userIdentifier + " Name in CV" + cvUserName );
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
 
                 SendMessage errorReply = new SendMessage();
                 errorReply.setChatId(msg.getChatId().toString());
@@ -121,10 +121,10 @@ public class CvWebhookBot extends TelegramWebhookBot {
                 try {
                     execute(errorReply);
                 } catch (TelegramApiException e2) {
-                    e2.printStackTrace();
+                    System.out.println(e2.getMessage());
                 }
             } catch (TelegramApiException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
 
                 SendMessage errorReply = new SendMessage();
                 errorReply.setChatId(msg.getChatId().toString());
@@ -132,7 +132,7 @@ public class CvWebhookBot extends TelegramWebhookBot {
                 try {
                     execute(errorReply);
                 } catch (TelegramApiException e2) {
-                    e2.printStackTrace();
+                    System.out.println(e2.getMessage());
                 }
             } finally {
                 userData.remove(userId);

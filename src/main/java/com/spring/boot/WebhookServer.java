@@ -10,7 +10,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class WebhookServer {
     public static void main(String[] args) {
         try {
-            String webhookUrl = "https://stale-states-occur.loca.lt";
+            String webhookUrl = " https://abdo-cv-bot.loca.lt";
 
             SetWebhook setWebhook = SetWebhook.builder()
                     .url(webhookUrl)
@@ -21,11 +21,9 @@ public class WebhookServer {
             botsApi.registerBot(bot, setWebhook);
 
             System.out.println("Webhook bot is now active at " + webhookUrl);
-            System.out.println("Bot is ready. Press Ctrl+C to stop.");
-            Thread.sleep(Long.MAX_VALUE);
 
-        } catch (TelegramApiException | InterruptedException  e) {
-            e.printStackTrace();
+        } catch (TelegramApiException e) {
+            System.out.println(e.getMessage());
         }
     }
 }
