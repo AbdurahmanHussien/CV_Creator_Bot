@@ -23,10 +23,11 @@ public class PdfUtil {
             document.open();
 
             BaseFont baseFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
-            Font nameFont = new Font(baseFont, 20, Font.BOLD);
-            Font infoFont = new Font(baseFont, 12, Font.NORMAL, BaseColor.DARK_GRAY);
-            Font titleFont = new Font(baseFont, 14, Font.BOLD, BaseColor.BLACK);
-            Font contentFont = new Font(baseFont, 11, Font.NORMAL, BaseColor.DARK_GRAY);
+            Font nameFont = new Font(baseFont, 22, Font.BOLD, BaseColor.BLACK);
+            Font infoFont = new Font(baseFont, 12, Font.NORMAL, BaseColor.BLACK);
+            Font titleFont = new Font(baseFont, 13, Font.BOLD, BaseColor.BLACK);
+            Font contentFont = new Font(baseFont, 11, Font.NORMAL, BaseColor.BLACK);
+
 
             addCenteredText(document, name, nameFont);
             addCenteredText(document, profession, infoFont);
@@ -65,32 +66,39 @@ public class PdfUtil {
     private static void addSection(Document doc, String title, String content, Font titleFont, Font textFont, String date) throws DocumentException {
         if (content == null || content.trim().isEmpty() || content.equalsIgnoreCase("skip")) return;
 
-        Paragraph titlePara = new Paragraph(title, titleFont);
-        titlePara.setSpacingBefore(10);
-        titlePara.setSpacingAfter(5);
-        doc.add(titlePara);
+        // العنوان + التاريخ في سطر واحد
+        PdfPTable headerTable = new PdfPTable(2);
+        headerTable.setWidthPercentage(100);
+        headerTable.setWidths(new int[]{80, 20});
+        headerTable.setSpacingBefore(15);
+        headerTable.setSpacingAfter(5);
 
-        PdfPTable table = new PdfPTable(2);
-        table.setWidthPercentage(100);
-        table.setWidths(new int[]{80, 20}); // 80% for content, 20% for date
+        PdfPCell titleCell = new PdfPCell(new Phrase(title, titleFont));
+        titleCell.setBorder(Rectangle.NO_BORDER);
 
-        PdfPCell contentCell = new PdfPCell(new Phrase(content, textFont));
-        PdfPCell dateCell = new PdfPCell(new Phrase((date != null && !date.equalsIgnoreCase("skip")) ? date : "", textFont));
-
-        contentCell.setBorder(Rectangle.NO_BORDER);
-        dateCell.setBorder(Rectangle.NO_BORDER);
+        PdfPCell dateCell = new PdfPCell(new Phrase(
+                (date != null && !date.trim().isEmpty() && !date.equalsIgnoreCase("skip")) ? date : "", textFont));
         dateCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        dateCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        dateCell.setBorder(Rectangle.NO_BORDER);
 
-        table.addCell(contentCell);
-        table.addCell(dateCell);
+        headerTable.addCell(titleCell);
+        headerTable.addCell(dateCell);
 
-        doc.add(table);
+        doc.add(headerTable);
 
+        // المحتوى نفسه
+        Paragraph contentPara = new Paragraph(content, textFont);
+        contentPara.setSpacingAfter(10);
+        contentPara.setLeading(16); // تباعد أسطر مريح
+        doc.add(contentPara);
+
+        // خط فاصل ومسافة بعده
         LineSeparator separator = new LineSeparator();
         separator.setLineColor(BaseColor.LIGHT_GRAY);
         doc.add(separator);
         doc.add(Chunk.NEWLINE);
-
     }
+
 
 }

@@ -83,8 +83,10 @@ public class WordUtil {
         XWPFParagraph contentPara = document.createParagraph();
         contentPara.setAlignment(ParagraphAlignment.LEFT);
         XWPFRun contentRun = contentPara.createRun();
-        contentRun.setText(content);
-        contentRun.setFontSize(11);
+        for (String line : content.split("\n")) {
+            contentRun.setText(line);
+            contentRun.addBreak();
+        }        contentRun.setFontSize(11);
         contentRun.setColor("000000");
         contentRun.setBold(false);
         contentPara.setSpacingAfter(200);
