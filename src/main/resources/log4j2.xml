@@ -2,7 +2,7 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%style{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}}{green} %highlight{%-5level}{FATAL=bright red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue, TRACE=white} %style{- %msg%n}{normal}" disableAnsi="false" noConsoleNoAnsi="false"/>
         </Console>
         <File name="File" fileName="bot-activity.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>

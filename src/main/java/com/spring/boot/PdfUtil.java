@@ -1,17 +1,19 @@
 package com.spring.boot;
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.draw.LineSeparator;
-
 import java.io.ByteArrayOutputStream;
+
+
 
 public class PdfUtil {
 
-    public static byte[] createSimpleCv(String name, String profession, String email,String linkedin, String phone, String summary,
-                                        String education, String experience, String projects,
-                                        String skills, String softSkills, String courses,
-                                        String languages, String military) {
+    public static byte[] createSimpleCv(String name, String profession, String email, String linkedin, String phone, String summary,
+                                        String education, String educationDate,
+                                        String experience, String experienceDate,
+                                        String projects, String skills, String softSkills, String courses,
+                                        String languages, String military)
+    {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
@@ -20,38 +22,27 @@ public class PdfUtil {
             PdfWriter.getInstance(document, output);
             document.open();
 
-            // Fonts
             BaseFont baseFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
-            Font headerFont = new Font(baseFont, 20, Font.BOLD);
-            Font subHeaderFont = new Font(baseFont, 12, Font.NORMAL);
-            Font sectionTitleFont = new Font(baseFont, 14, Font.BOLD, BaseColor.DARK_GRAY);
-            Font sectionTextFont = new Font(baseFont, 11, Font.NORMAL);
+            Font nameFont = new Font(baseFont, 20, Font.BOLD);
+            Font infoFont = new Font(baseFont, 12, Font.NORMAL, BaseColor.DARK_GRAY);
+            Font titleFont = new Font(baseFont, 14, Font.BOLD, BaseColor.BLACK);
+            Font contentFont = new Font(baseFont, 11, Font.NORMAL, BaseColor.DARK_GRAY);
 
-            // Header
-            Paragraph header = new Paragraph(name + "\n" + profession, headerFont);
-            header.setAlignment(Element.ALIGN_CENTER);
-            document.add(header);
-
-            Paragraph subHeader = new Paragraph(email + " | " +linkedin + " | " +phone, subHeaderFont);
-            subHeader.setAlignment(Element.ALIGN_CENTER);
-            document.add(subHeader);
-
-            LineSeparator line = new LineSeparator();
-            line.setLineColor(BaseColor.LIGHT_GRAY);
+            addCenteredText(document, name, nameFont);
+            addCenteredText(document, profession, infoFont);
+            addCenteredText(document, email + " | " + linkedin + " | " + phone, infoFont);
             document.add(Chunk.NEWLINE);
-            document.add(line);
-            document.add(Chunk.NEWLINE);
+            document.add(new LineSeparator());
 
-            // Sections
-            addSection(document, "Professional Summary", summary, sectionTitleFont, sectionTextFont);
-            addSection(document, "Education", education, sectionTitleFont, sectionTextFont);
-            addSection(document, "Experience", experience, sectionTitleFont, sectionTextFont);
-            addSection(document, "Projects", projects, sectionTitleFont, sectionTextFont);
-            addSection(document, "Technical Skills", skills, sectionTitleFont, sectionTextFont);
-            addSection(document, "Soft Skills", softSkills, sectionTitleFont, sectionTextFont);
-            addSection(document, "Courses & Certifications", courses, sectionTitleFont, sectionTextFont);
-            addSection(document, "Languages", languages, sectionTitleFont, sectionTextFont);
-            addSection(document, "Military Status", military, sectionTitleFont, sectionTextFont);
+            addSection(document, "Professional Summary", summary, titleFont, contentFont, null);
+            addSection(document, "Education", education, titleFont, contentFont, educationDate);
+            addSection(document, "Experience", experience, titleFont, contentFont, experienceDate);
+            addSection(document, "Projects", projects, titleFont, contentFont, null);
+            addSection(document, "Technical Skills", skills, titleFont, contentFont, null);
+            addSection(document, "Soft Skills", softSkills, titleFont, contentFont, null);
+            addSection(document, "Courses & Certifications", courses, titleFont, contentFont, null);
+            addSection(document, "Languages", languages, titleFont, contentFont, null);
+            addSection(document, "Military Status", military, titleFont, contentFont, null);
 
             document.close();
 
@@ -62,18 +53,44 @@ public class PdfUtil {
         return output.toByteArray();
     }
 
-    private static void addSection(Document doc, String title, String content, Font titleFont, Font textFont) throws DocumentException {
-        Paragraph sectionTitle = new Paragraph(title, titleFont);
-        sectionTitle.setSpacingBefore(10);
-        sectionTitle.setSpacingAfter(5);
-        doc.add(sectionTitle);
+    private static void addCenteredText(Document document, String text, Font font) throws DocumentException {
+        if (text == null || text.trim().isEmpty() || text.equalsIgnoreCase("skip")) return;
 
-        Paragraph sectionContent = new Paragraph(content, textFont);
-        sectionContent.setSpacingAfter(10);
-        doc.add(sectionContent);
+        Paragraph p = new Paragraph(text, font);
+        p.setAlignment(Element.ALIGN_CENTER);
+        p.setSpacingAfter(5);
+        document.add(p);
+    }
+
+    private static void addSection(Document doc, String title, String content, Font titleFont, Font textFont, String date) throws DocumentException {
+        if (content == null || content.trim().isEmpty() || content.equalsIgnoreCase("skip")) return;
+
+        Paragraph titlePara = new Paragraph(title, titleFont);
+        titlePara.setSpacingBefore(10);
+        titlePara.setSpacingAfter(5);
+        doc.add(titlePara);
+
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        table.setWidths(new int[]{80, 20}); // 80% for content, 20% for date
+
+        PdfPCell contentCell = new PdfPCell(new Phrase(content, textFont));
+        PdfPCell dateCell = new PdfPCell(new Phrase((date != null && !date.equalsIgnoreCase("skip")) ? date : "", textFont));
+
+        contentCell.setBorder(Rectangle.NO_BORDER);
+        dateCell.setBorder(Rectangle.NO_BORDER);
+        dateCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+        table.addCell(contentCell);
+        table.addCell(dateCell);
+
+        doc.add(table);
 
         LineSeparator separator = new LineSeparator();
         separator.setLineColor(BaseColor.LIGHT_GRAY);
         doc.add(separator);
+        doc.add(Chunk.NEWLINE);
+
     }
+
 }
